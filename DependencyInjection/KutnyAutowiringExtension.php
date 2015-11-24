@@ -14,6 +14,7 @@ class KutnyAutowiringExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('kutny_autowiring.ignored_services', $config['ignored_services']);
+        $container->setParameter('kutny_autowiring.forced_wires', $config['forced_wires']);
     }
 
 }

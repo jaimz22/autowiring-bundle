@@ -9,12 +9,12 @@ use Symfony\Component\DependencyInjection\Reference;
 class ParameterProcessor
 {
 
-    public function getParameterValue(ReflectionParameter $parameter, array $classes, $serviceId)
+    public function getParameterValue(ReflectionParameter $parameter, array $classes, $serviceId, array $forcedWires)
     {
         $parameterClass = $parameter->getClass();
 
         if ($parameterClass) {
-            $value = $this->processParameterClass($parameterClass, $parameter, $classes);
+            $value = $this->processParameterClass($parameterClass, $parameter, $classes, $forcedWires);
         } else {
             if ($parameter->isDefaultValueAvailable()) {
                 $value = $parameter->getDefaultValue();
@@ -28,7 +28,7 @@ class ParameterProcessor
         return $value;
     }
 
-    private function processParameterClass(ReflectionClass $parameterClass, ReflectionParameter $parameter, $classes)
+    private function processParameterClass(ReflectionClass $parameterClass, ReflectionParameter $parameter, $classes, array $forcedWires)
     {
         $class = $parameterClass->getName();
 
@@ -37,8 +37,12 @@ class ParameterProcessor
         }
 
         if (isset($classes[$class])) {
-            if (count($classes[$class]) === 1) {
-                $value = new Reference($classes[$class][0]);
+            if (count($classes[$class]) === 1 || array_key_exists($class, $forcedWires)) {
+                if (array_key_exists($class, $forcedWires)) {
+                    $value = new Reference($forcedWires[$class]);
+                }else{
+                    $value = new Reference($classes[$class][0]);
+                }
             } else {
                 $serviceNames = implode(', ', $classes[$class]);
                 $message = 'Multiple services of ' . $class . ' defined (' . $serviceNames . '), class used in ' . $parameter->getDeclaringClass()->getName();

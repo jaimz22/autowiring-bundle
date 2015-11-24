@@ -28,7 +28,7 @@ class AutowiringCompilerPass implements CompilerPassInterface
         $serviceDefinitions = $containerBuilder->getDefinitions();
 
         $ignoredServicesRegExp = $this->getIgnoredServicesRegExp($containerBuilder);
-
+        $forcedWires = $containerBuilder->getParameter('kutny_autowiring.forced_wires');
         foreach ($serviceDefinitions as $serviceId => $definition) {
             if ($definition->isAbstract() || !$definition->isPublic()) {
                 continue;
@@ -52,7 +52,7 @@ class AutowiringCompilerPass implements CompilerPassInterface
             $constructor = $reflection->getConstructor();
 
             if ($constructor !== null && $constructor->isPublic()) {
-                $this->classConstructorFiller->autowireParams($constructor, $serviceId, $definition, $classList);
+                $this->classConstructorFiller->autowireParams($constructor, $serviceId, $definition, $classList, $forcedWires);
             }
         }
     }

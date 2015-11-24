@@ -25,6 +25,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(array())
                     ->prototype('scalar')->end()
                     ->end()
+                ->arrayNode('forced_wires')
+                    ->defaultValue(array())
+                    ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end();
 
