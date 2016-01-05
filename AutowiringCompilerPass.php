@@ -24,10 +24,10 @@ class AutowiringCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $containerBuilder)
     {
-        $classList = $this->classListBuilder->buildClassList($containerBuilder);
+        $ignoredServicesRegExp = $this->getIgnoredServicesRegExp($containerBuilder);
+        $classList = $this->classListBuilder->buildClassList($containerBuilder, $ignoredServicesRegExp);
         $serviceDefinitions = $containerBuilder->getDefinitions();
 
-        $ignoredServicesRegExp = $this->getIgnoredServicesRegExp($containerBuilder);
         $forcedWires = $containerBuilder->getParameter('kutny_autowiring.forced_wires');
         foreach ($serviceDefinitions as $serviceId => $definition) {
             if ($definition->isAbstract() || !$definition->isPublic()) {
